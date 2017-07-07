@@ -11,115 +11,58 @@ import AVFoundation
 
 class ViewController: UIViewController {
     
-    var btnSound: AVAudioPlayer!
-    var runningNumber = ""
+    let btnSound = soundByte(filePath: "btn", Ext: "wav")
+    let calc = Calculator()
     
-    enum Operation: String {
-        case Divide = "/"
-        case Multiply = "*"
-        case Add = "+"
-        case Subtract = "-"
-        case Empty = "Empty"
-        
-    }
-    
-    var currentOperation = Operation.Empty
-    
-    var leftValStr = ""
-    var rightValStr = ""
-    var result = ""
-
     @IBOutlet weak var outputLbl: UILabel!
+    
     @IBAction func onDivide(_ sender: Any) {
-        processOperation(ofOperator: Operation.Divide)
+        calc.processOperation(ofOperator: Operation.Divide)
+        btnSound?.play()
     }
     @IBAction func onMultiply(_ sender: Any) {
-        processOperation(ofOperator: Operation.Multiply)
+        calc.processOperation(ofOperator: Operation.Multiply)
+        btnSound?.play()
     }
     @IBAction func onSubtract(_ sender: Any) {
-        processOperation(ofOperator: Operation.Subtract)
+        calc.processOperation(ofOperator: Operation.Subtract)
+        btnSound?.play()
     }
     @IBAction func onAdd(_ sender: Any) {
-        processOperation(ofOperator: Operation.Add)
+        calc.processOperation(ofOperator: Operation.Add)
+        btnSound?.play()
     }
     @IBAction func onEquals(_ sender: Any) {
-        processOperation(ofOperator: currentOperation)
+        calc.processOperation(ofOperator: calc.currentOperation)
+        outputLbl.text = calc.result
+        btnSound?.play()
     }
     @IBAction func clear(_ sender: Any) {
-        clear()
+        calc.clear()
+        outputLbl.text = "0"
+        btnSound?.play()
     }
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        
-        let path = Bundle.main.path(forResource: "btn", ofType: "wav")
-        let soundURL = URL(fileURLWithPath: path!)
-        
-        do {
-            try btnSound = AVAudioPlayer(contentsOf: soundURL)
-            btnSound.prepareToPlay()
-        } catch let err as NSError {
-            print(err.debugDescription)
-        }
         
         outputLbl.text = "0"
+        btnSound?.prepareSound()
+        
     }
     
     @IBAction func buttonPressed(sender: UIButton) {
-        playSound()
+        btnSound?.play()
         
-        runningNumber += "\(sender.tag)"
-        outputLbl.text = runningNumber
+        calc.runningNumber += "\(sender.tag)"
+        outputLbl.text = calc.runningNumber
     }
     
-    func playSound() {
-        if btnSound.isPlaying {
-            btnSound.stop()
-        }
-        
-        btnSound.play()
-    }
-    
-    func processOperation(ofOperator: Operation) {
-        playSound()
-        if currentOperation != Operation.Empty {
-            if runningNumber != "" {
-                rightValStr = runningNumber
-                runningNumber = ""
-                
-                switch currentOperation {
-                case Operation.Multiply: result = "\(Double(leftValStr)! * Double(rightValStr)!)"
-                    case Operation.Add: result = "\(Double(leftValStr)! + Double(rightValStr)!)"
-                    case Operation.Divide: result = "\(Double(leftValStr)! / Double(rightValStr)!)"
-                    case Operation.Subtract: result = "\(Double(leftValStr)! - Double(rightValStr)!)"
-                    case Operation.Empty: result = "Empty"
-                }
-                
-                leftValStr = result
-                outputLbl.text = result
-            }
-            
-            currentOperation = ofOperator
-        } else {
-            leftValStr = runningNumber
-            runningNumber = ""
-            currentOperation = ofOperator
-        }
-        
-    }
-    
-    func clear() {
-        outputLbl.text = "0"
-        leftValStr = ""
-        rightValStr = ""
-        currentOperation = Operation.Empty
-        result = ""
-    }
     
         
-
 }
+
+
+
 
 

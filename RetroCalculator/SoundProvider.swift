@@ -32,7 +32,7 @@ class soundByte: soundBytePath, soundURL {
         
         do {
             try sound = AVAudioPlayer(contentsOf: soundURL)
-            sound.prepareToPlay()
+               sound.prepareToPlay()
         }
         catch let err as NSError {
             print(err.debugDescription)
@@ -41,9 +41,13 @@ class soundByte: soundBytePath, soundURL {
     }
     
     func play() {
+        
+        if sound.isPlaying {
+            sound.stop()
+        }
         sound.play()
     }
-    
+        
     func stop() {
         sound.stop()
     }
@@ -52,3 +56,5 @@ class soundByte: soundBytePath, soundURL {
         sound.numberOfLoops = -1
     }
 }
+
+
